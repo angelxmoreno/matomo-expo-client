@@ -1,12 +1,20 @@
 {
-    "exclude": ["./tests/", "./node_modules/", "./dist/"],
-    "include": ["./src/"],
+    "exclude": [
+        "./tests/",
+        "./dist/",
+        "./node_modules"
+    ],
+    "include": [
+        "./src/",
+    ],
     "compilerOptions": {
         "declaration": true,
         "moduleResolution": "node",
         "target": "es6",
         "module": "commonjs",
-        "lib": ["es6"],
+        "lib": [
+            "es6"
+        ],
         "allowJs": true,
         "outDir": "dist",
         "rootDir": "src",
