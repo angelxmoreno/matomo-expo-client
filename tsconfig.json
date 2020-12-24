@@ -5,7 +5,7 @@
         "./node_modules"
     ],
     "include": [
-        "./src/",
+        "./src/"
     ],
     "compilerOptions": {
         "declaration": true,
@@ -17,7 +17,7 @@
         ],
         "allowJs": true,
         "outDir": "dist",
-        "rootDir": "src",
+//        "rootDir": "src",
         "strict": true,
         "noImplicitAny": false,
         "esModuleInterop": true,

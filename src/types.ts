@@ -1,10 +1,11 @@
 // @SuppressWarnings("SpellCheckingInspection")
-import VisitTracker from './VisitTracker';
-import UUID2HexClient from 'uuid2hex-client-js';
-import { Constants } from 'expo-constants';
+import TestableVisitTracker from './testable/TestableVisitTracker';
+import UUID2HexClient, {CacheableInterface} from 'uuid2hex-client-js';
+import {Constants} from 'expo-constants';
+import VisitTracker from "./VisitTracker";
 
 export type RequiredParams = {
-    idsite: string;
+    idsite: number;
     rec: 1;
 };
 
@@ -184,14 +185,11 @@ export type ValidRequestParams =
     | EcommerceRequestParams
     | EcommerceOrderRequestParams;
 
-export type MatomoExpoParams = {
-    idsite: string;
+export interface BaseMatomoExpoParams {
+    idsite: number;
     serverUrl: string;
     enabled: boolean;
     log: boolean;
-    userParams: UserParams;
-    visitTracker: VisitTracker;
-    uuid2hexClient: UUID2HexClient;
-    constants: Constants;
-    device: Record<string, unknown>;
-};
+    userParams?: UserParams;
+}
+

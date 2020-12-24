@@ -1,5 +1,6 @@
 import { Dimensions } from 'react-native';
 import * as Localization from 'expo-localization';
+import Constants from 'expo-constants';
 
 export default class Utility {
     static getResolution(): string {

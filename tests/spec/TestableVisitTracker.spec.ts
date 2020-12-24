@@ -1,10 +1,10 @@
-import VisitTracker from '../../src/VisitTracker';
+import TestableVisitTracker from '../../src/testable/TestableVisitTracker';
 import { Constants } from 'expo-constants';
 import { expect } from 'chai';
 import FakeAsyncStorage from '../utils/FakeAsyncStorage';
 import FakeConstants from '../utils/FakeConstants';
 
-describe('VisitTracker', function () {
+describe('TestableVisitTracker', function () {
     const visitTrackerPrefix = '@testVisitTracker';
     const fakeStorageEngine = new FakeAsyncStorage();
     const fakeConstants = new FakeConstants();
@@ -12,7 +12,7 @@ describe('VisitTracker', function () {
     const newVisitTracker = () => {
         fakeStorageEngine.clearAll();
         fakeConstants.resetSession();
-        return new VisitTracker(fakeStorageEngine, visitTrackerPrefix, (fakeConstants as unknown) as Constants);
+        return new TestableVisitTracker(fakeStorageEngine, visitTrackerPrefix, (fakeConstants as unknown) as Constants);
     };
 
     describe('build', function () {
