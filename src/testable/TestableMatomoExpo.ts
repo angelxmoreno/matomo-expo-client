@@ -1,11 +1,19 @@
 //@SuppressWarnings("SpellCheckingInspection")
 
 import TestableVisitTracker from './TestableVisitTracker';
-import {BaseMatomoExpoParams, RecommendedParams, RequiredParams, UserParams, ValidRequestParams} from '../types';
+import {
+    BaseMatomoExpoParams,
+    ContentRequestParams,
+    EventRequestParams,
+    RecommendedParams,
+    RequiredParams,
+    UserParams,
+    ValidRequestParams,
+} from '../types';
 import UUID2HexClient from 'uuid2hex-client-js';
 import Utility from '../Utility';
-import {Constants} from 'expo-constants';
-
+import { Constants } from 'expo-constants';
+import axios from 'axios';
 
 export interface TestableMatomoExpoParams extends BaseMatomoExpoParams {
     visitTracker: TestableVisitTracker;
@@ -14,6 +22,19 @@ export interface TestableMatomoExpoParams extends BaseMatomoExpoParams {
     device: Record<string, unknown>;
 }
 
+export type EventTrackingData = {
+    category: string;
+    action: string;
+    name?: string;
+    value?: number;
+};
+
+export type ContentInteractionData = {
+    content_name: string;
+    content_piece?: string;
+    target?: string;
+    interaction?: string;
+};
 export default class TestableMatomoExpo {
     protected idsite: number;
     protected serverUrl: string;
@@ -24,18 +45,18 @@ export default class TestableMatomoExpo {
     protected uuid2hexClient: UUID2HexClient;
     protected constants: Constants;
     protected device: Record<string, unknown>;
-    
+
     constructor({
-                    idsite,
-                    serverUrl,
-                    enabled = true,
-                    log = true,
-                    userParams = {},
-                    visitTracker,
-                    uuid2hexClient,
-                    constants,
-                    device,
-                }: TestableMatomoExpoParams) {
+        idsite,
+        serverUrl,
+        enabled = true,
+        log = true,
+        userParams = {},
+        visitTracker,
+        uuid2hexClient,
+        constants,
+        device,
+    }: TestableMatomoExpoParams) {
         this.idsite = idsite;
         this.serverUrl = serverUrl;
         this.enabled = enabled;
@@ -59,11 +80,45 @@ export default class TestableMatomoExpo {
             url: Utility.buildUrl(path, query),
             pv_id,
         });
-    
+
         return pv_id;
     }
 
-    protected getDeviceInfo() {
+    async trackContentInteraction(data: ContentInteractionData, pv_id?: string): Promise<void> {
+        const { content_name, content_piece, target, interaction } = data;
+
+        const payload: ContentRequestParams = {
+            ...(await this.buildDefaultParams()),
+            c_n: content_name,
+            c_p: content_piece,
+            c_t: target,
+            c_i: interaction,
+        };
+
+        await this.doTrack({
+            pv_id,
+            ...payload,
+        });
+    }
+
+    async trackEvent(data: EventTrackingData, pv_id?: string): Promise<void> {
+        const { category, action, name, value } = data;
+
+        const payload: EventRequestParams = {
+            ...(await this.buildDefaultParams()),
+            e_c: category,
+            e_a: action,
+            e_n: name,
+            e_v: value,
+        };
+
+        await this.doTrack({
+            pv_id,
+            ...payload,
+        });
+    }
+
+    protected getDeviceInfo(): Record<string, unknown> {
         const deviceInfo = {
             isDevice: this.device.isDevice,
             brand: this.device.brand,
@@ -133,6 +188,14 @@ export default class TestableMatomoExpo {
     }
 
     protected async doTrack(data: ValidRequestParams): Promise<void> {
-        console.log('ValidRequestParams', data);
+        try {
+            await axios.get(this.serverUrl, {
+                params: data,
+            });
+
+            // @TODO log success
+        } catch (error) {
+            // @TODO log error
+        }
     }
 }

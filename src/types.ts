@@ -1,8 +1,4 @@
 // @SuppressWarnings("SpellCheckingInspection")
-import TestableVisitTracker from './testable/TestableVisitTracker';
-import UUID2HexClient, {CacheableInterface} from 'uuid2hex-client-js';
-import {Constants} from 'expo-constants';
-import VisitTracker from "./VisitTracker";
 
 export type RequiredParams = {
     idsite: number;
@@ -192,4 +188,3 @@ export interface BaseMatomoExpoParams {
     log: boolean;
     userParams?: UserParams;
 }
-
