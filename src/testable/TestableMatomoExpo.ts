@@ -51,14 +51,15 @@ export default class TestableMatomoExpo {
         this.userParams.uid = id;
     }
 
-    async trackScreenView(path: string): Promise<string> {
+    async trackScreenView(path: string, query?: Record<string, unknown>): Promise<string> {
         const pv_id = Utility.genRanHex();
         await this.doTrack({
             ...(await this.buildDefaultParams()),
             action_name: path,
+            url: Utility.buildUrl(path, query),
             pv_id,
         });
-
+    
         return pv_id;
     }
 

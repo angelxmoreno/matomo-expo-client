@@ -48,6 +48,7 @@
         "axios": "^0.21.1",
         "expo-constants": "*",
         "expo-device": "^3.0.0",
+        "expo-linking": "^2.0.0",
         "expo-localization": "^9.1.0",
         "react-native": "^0.63.4",
         "uuid2hex-client-js": "^1.0.2"
