@@ -19,6 +19,7 @@ export interface RecommendedParams {
     // being cached by the browser or a proxy.
     rand?: string;
     apiv?: 1;
+    send_image?: 0 | 1;
 }
 
 export type UserParams = {
@@ -182,10 +183,14 @@ export type ValidRequestParams =
     | EcommerceOrderRequestParams;
 
 export type TrackingParams = RecommendedParams | ContentTrackingParams | EventTrackingParams;
+
+export type LoggerFunction = (msg: string, params?: unknown) => void;
+
 export interface BaseMatomoExpoParams {
     idsite: number;
     serverUrl: string;
     enabled: boolean;
-    log: boolean;
+    logEnabled: boolean;
     userParams?: UserParams;
+    loggerInstance: LoggerFunction;
 }

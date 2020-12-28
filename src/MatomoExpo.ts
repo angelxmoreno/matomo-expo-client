@@ -15,7 +15,8 @@ export default class MatomoExpo extends TestableMatomoExpo {
         idsite,
         serverUrl,
         enabled = true,
-        log = true,
+        logEnabled = false,
+        loggerInstance,
         userParams = {},
         storageEngine,
         uuidServiceUrl,
@@ -31,12 +32,13 @@ export default class MatomoExpo extends TestableMatomoExpo {
             idsite,
             serverUrl,
             enabled,
-            log,
+            logEnabled,
             userParams,
             visitTracker,
             uuid2hexClient,
             constants: Constants,
             device: Device,
+            loggerInstance,
         });
     }
 }
