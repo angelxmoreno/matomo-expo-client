@@ -190,7 +190,7 @@ export interface BaseMatomoExpoParams {
     idsite: number;
     serverUrl: string;
     enabled: boolean;
-    logEnabled: boolean;
+    logEnabled?: boolean;
     userParams?: UserParams;
-    loggerInstance: LoggerFunction;
+    loggerInstance?: LoggerFunction;
 }
