@@ -3,16 +3,17 @@
 import TestableVisitTracker from './TestableVisitTracker';
 import {
     BaseMatomoExpoParams,
-    ContentRequestParams,
-    EventRequestParams,
+    ContentTrackingParams,
+    EventTrackingParams,
     RecommendedParams,
     RequiredParams,
+    TrackingParams,
     UserParams,
     ValidRequestParams,
 } from '../types';
 import UUID2HexClient from 'uuid2hex-client-js';
 import Utility from '../Utility';
-import { Constants } from 'expo-constants';
+import {Constants} from 'expo-constants';
 import axios from 'axios';
 
 export interface TestableMatomoExpoParams extends BaseMatomoExpoParams {
@@ -45,6 +46,7 @@ export default class TestableMatomoExpo {
     protected uuid2hexClient: UUID2HexClient;
     protected constants: Constants;
     protected device: Record<string, unknown>;
+    protected lastPageViewId?: string;
 
     constructor({
         idsite,
@@ -67,55 +69,44 @@ export default class TestableMatomoExpo {
         this.constants = constants;
         this.device = device;
     }
-
+    
     setUserId(id: string): void {
         this.userParams.uid = id;
     }
-
-    async trackScreenView(path: string, query?: Record<string, unknown>): Promise<string> {
-        const pv_id = Utility.genRanHex();
-        await this.doTrack({
-            ...(await this.buildDefaultParams()),
+    
+    async trackScreenView(path: string, query?: Record<string, unknown>): Promise<void> {
+        this.lastPageViewId = Utility.genRanHex();
+        
+        const payload: RecommendedParams = {
             action_name: path,
             url: Utility.buildUrl(path, query),
-            pv_id,
-        });
-
-        return pv_id;
+        };
+        await this.doTrack(payload);
     }
-
-    async trackContentInteraction(data: ContentInteractionData, pv_id?: string): Promise<void> {
-        const { content_name, content_piece, target, interaction } = data;
-
-        const payload: ContentRequestParams = {
-            ...(await this.buildDefaultParams()),
+    
+    async trackContentInteraction(data: ContentInteractionData): Promise<void> {
+        const {content_name, content_piece, target, interaction} = data;
+        const payload: ContentTrackingParams = {
             c_n: content_name,
             c_p: content_piece,
             c_t: target,
             c_i: interaction,
         };
-
-        await this.doTrack({
-            pv_id,
-            ...payload,
-        });
+        
+        await this.doTrack(payload);
     }
-
-    async trackEvent(data: EventTrackingData, pv_id?: string): Promise<void> {
-        const { category, action, name, value } = data;
-
-        const payload: EventRequestParams = {
-            ...(await this.buildDefaultParams()),
+    
+    async trackEvent(data: EventTrackingData): Promise<void> {
+        const {category, action, name, value} = data;
+        
+        const payload: EventTrackingParams = {
             e_c: category,
             e_a: action,
             e_n: name,
             e_v: value,
         };
-
-        await this.doTrack({
-            pv_id,
-            ...payload,
-        });
+        
+        await this.doTrack(payload);
     }
 
     protected getDeviceInfo(): Record<string, unknown> {
@@ -180,19 +171,23 @@ export default class TestableMatomoExpo {
         };
 
         return {
+            pv_id: this.lastPageViewId,
             ...requiredParams,
             ...recommendedParams,
             ...userParams,
             ...this.userParams,
         };
     }
-
-    protected async doTrack(data: ValidRequestParams): Promise<void> {
+    
+    protected async doTrack(data: TrackingParams): Promise<void> {
         try {
             await axios.get(this.serverUrl, {
-                params: data,
+                params: {
+                    ...(await this.buildDefaultParams()),
+                    data,
+                },
             });
-
+            
             // @TODO log success
         } catch (error) {
             // @TODO log error

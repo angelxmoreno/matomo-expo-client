@@ -181,6 +181,7 @@ export type ValidRequestParams =
     | EcommerceRequestParams
     | EcommerceOrderRequestParams;
 
+export type TrackingParams = RecommendedParams | ContentTrackingParams | EventTrackingParams;
 export interface BaseMatomoExpoParams {
     idsite: number;
     serverUrl: string;
